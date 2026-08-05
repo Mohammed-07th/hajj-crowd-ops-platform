@@ -1,0 +1,38 @@
+# Python 3.11 (pinned dependency set targets it; Airflow 2.10 and GE 0.18 do not
+# run on 3.12+). Install into .venv:
+#   /opt/homebrew/bin/python3.11 -m venv .venv && .venv/bin/pip install -r requirements.txt
+#
+# Airflow is installed into a SEPARATE venv (.venv-airflow, see requirements-airflow.txt)
+# because Airflow 2.10 pins sqlalchemy<2 and flask/connexion versions that
+# conflict with the Great Expectations + torch stack. The DAG shells out to this
+# venv's interpreter, so both stay real and neither constrains the other.
+
+# --- ingestion -------------------------------------------------------------
+confluent-kafka==2.5.0
+pydantic==2.9.2
+pydantic-settings==2.5.2
+
+# --- lakehouse (delta-rs: Rust Delta implementation, no JVM) ---------------
+deltalake==0.20.2
+polars==1.9.0
+pyarrow==17.0.0
+# pandas is required by Great Expectations' PandasExecutionEngine; the pipeline
+# itself uses polars.
+pandas==2.2.3
+numpy==1.26.4
+
+# --- quality + lineage -----------------------------------------------------
+great-expectations==0.18.22
+openlineage-python==1.22.0
+
+# --- rag -------------------------------------------------------------------
+qdrant-client==1.11.3
+sentence-transformers==3.1.1
+rank-bm25==0.2.2
+openai==1.51.0
+tenacity==9.0.0
+tiktoken==0.7.0
+
+# --- dev -------------------------------------------------------------------
+pytest==8.3.3
+python-dotenv==1.0.1

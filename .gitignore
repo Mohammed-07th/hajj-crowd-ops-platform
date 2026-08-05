@@ -1,0 +1,33 @@
+# --- secrets ---------------------------------------------------------------
+# .env holds OPENROUTER_API_KEY and PII_SALT. A key committed once stays in git
+# history even after deletion, so it must never be tracked in the first place.
+.env
+
+# --- generated data --------------------------------------------------------
+/delta/
+/logs/
+/airflow/
+.cache/
+*.log
+
+# --- python ----------------------------------------------------------------
+__pycache__/
+*.pyc
+.venv/
+.venv-airflow/
+.pytest_cache/
+
+# --- great expectations ----------------------------------------------------
+# uncommitted/ holds local validation results and Data Docs build state.
+# The generated Data Docs we want as *evidence* are copied into
+# docs/evidence/ instead, which is tracked.
+great_expectations/uncommitted/
+
+# --- model downloads -------------------------------------------------------
+# ~/.cache/huggingface is outside the repo, but guard against a local override.
+models/
+*.safetensors
+*.bin
+
+# --- macOS -----------------------------------------------------------------
+.DS_Store
