@@ -1,0 +1,93 @@
+
+==========================================================================
+D1
+==========================================================================
+  [PASS] Kafka broker defined in compose (no Zookeeper)
+  [PASS] topics created by script
+  [PASS] confluent-kafka used by producer and consumer
+  [PASS] no queue simulation in src/
+  [PASS] Pydantic ConfigDict(strict=True) on both contracts
+  [PASS] 10 corruption types per stream
+  [PASS] DLQ envelope carries rejection_reason
+  [PASS] quarantine Delta table on disk
+  [PASS] manual offset commit
+  [PASS] contract rejection evidence committed
+
+==========================================================================
+D2
+==========================================================================
+  [PASS] real _delta_log for bronze_zone_occupancy
+  [PASS] real _delta_log for bronze_service_requests
+  [PASS] real _delta_log for silver_zone_occupancy
+  [PASS] real _delta_log for silver_service_requests
+  [PASS] real _delta_log for gold_zone_hourly
+  [PASS] bronze carries Kafka metadata columns
+  [PASS] MERGE on request_id
+  [PASS] staging deduped to latest per key
+  [PASS] schema enforcement failure captured
+  [PASS] mergeSchema additive success captured
+  [PASS] gold uses GROUP BY (group_by)
+  [PASS] MERGE evidence committed
+
+==========================================================================
+D3
+==========================================================================
+  [PASS] SOP corpus present (10 documents)  (10 documents)
+  [PASS] recursive chunker with 512/64
+  [PASS] e5 query:/passage: prefixes applied
+  [PASS] Qdrant collection with explicit HNSW
+  [PASS] BM25 over the same chunk set
+  [PASS] RRF implemented by hand with k=60
+  [PASS] RRF unit-tested against hand-computed values
+  [PASS] cross-encoder rerank
+  [PASS] model fallback chain + answer cache + model_used
+  [PASS] golden questions include Arabic
+  [PASS] hybrid-search proof committed
+  [PASS] rerank proof committed
+  [PASS] golden run: all questions retrieve their expected document  (9/9)
+  [PASS] golden run: all answers cite the expected document  (9/9)
+
+==========================================================================
+D4
+==========================================================================
+  [PASS] DAG file present with catchup=False
+  [PASS] retries=2 with retry_delay
+  [PASS] sensor used for an external dependency
+  [PASS] on_failure_callback emits lineage FAIL
+  [PASS] green-run screenshot committed
+  [PASS] gate-failure screenshot committed
+  [PASS] gate-failure shows downstream not executed
+
+==========================================================================
+D5
+==========================================================================
+  [PASS] GE suite on disk: bronze_suite
+  [PASS] GE suite on disk: silver_requests_suite
+  [PASS] checkpoint raises on failure
+  [PASS] volume pillar on bronze and silver
+  [PASS] proves raw PII columns dropped
+  [PASS] OpenLineage START events
+  [PASS] OpenLineage COMPLETE events
+  [PASS] row-count facets on COMPLETE
+  [PASS] OpenLineage FAIL events captured
+
+==========================================================================
+REPO
+==========================================================================
+  [PASS] README covers prerequisites/setup/run/config
+  [PASS] RUBRIC_MAP.md present
+  [PASS] ARCHITECTURE.md present
+  [PASS] GOVERNANCE.md present
+  [PASS] RAG_DESIGN.md present
+  [PASS] synthetic data disclaimer near the top of README
+  [PASS] SDAIA Academy link
+  [PASS] attribution with cohort and trainer
+  [PASS] .gitignore excludes .env
+  [PASS] 30+ incremental commits  (38 commits)
+  [PASS] .env not tracked
+  [PASS] no API key in git history
+  [PASS] executed notebook with output
+
+==========================================================================
+65/65 checks passed
+==========================================================================

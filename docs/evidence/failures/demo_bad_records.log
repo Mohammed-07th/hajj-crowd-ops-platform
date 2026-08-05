@@ -1,0 +1,67 @@
+====================================================================================
+FAILURE DEMO 1 — contract rejection (100 events, 20 malformed)
+====================================================================================
+
+produced 100 events to 'demo_bad_records' (20 malformed, 10 distinct corruption types)
+
+------------------------------------------------------------------------------------
+RESULT:  accepted -> bronze: 80     rejected -> DLQ: 20
+------------------------------------------------------------------------------------
+
+Rejections by injected corruption type and the rule that caught it:
+
+shape: (10, 3)
+┌───────────────────┬────────────────────┬─────┐
+│ injected          ┆ rules              ┆ n   │
+│ ---               ┆ ---                ┆ --- │
+│ str               ┆ str                ┆ u32 │
+╞═══════════════════╪════════════════════╪═════╡
+│ bad_sensor_status ┆ literal_error      ┆ 2   │
+│ extra_field       ┆ extra_forbidden    ┆ 2   │
+│ future_timestamp  ┆ value_error        ┆ 2   │
+│ malformed_json    ┆ json_invalid       ┆ 2   │
+│ missing_event_id  ┆ missing            ┆ 2   │
+│ negative_entries  ┆ greater_than_equal ┆ 2   │
+│ null_zone_id      ┆ string_type        ┆ 2   │
+│ over_capacity     ┆ value_error        ┆ 2   │
+│ string_for_int    ┆ int_type           ┆ 2   │
+│ unknown_zone      ┆ value_error        ┆ 2   │
+└───────────────────┴────────────────────┴─────┘
+
+Every rejection with its reason:
+
+  offset=  0  injected=over_capacity              rule=value_error          <root>: Value error, occupancy_estimate 999999 exceeds 150% of zone ALULA_HEGRA capacity 3000 (c
+  offset=  2  injected=negative_entries           rule=greater_than_equal   entries: Input should be greater than or equal to 0
+  offset=  3  injected=unknown_zone               rule=value_error          zone_id: Value error, unknown zone_id 'MATAF_99' - not present in zones.csv reference set
+  offset=  4  injected=future_timestamp           rule=value_error          event_time: Value error, event_time '2026-08-08T20:42:13.109292+00:00' is in the future
+  offset= 10  injected=string_for_int             rule=int_type             entries: Input should be a valid integer
+  offset= 11  injected=bad_sensor_status          rule=literal_error        sensor_status: Input should be 'OK', 'DEGRADED' or 'OFFLINE'
+  offset= 12  injected=missing_event_id           rule=missing              event_id: Field required
+  offset= 14  injected=malformed_json             rule=json_invalid         <root>: Invalid JSON: EOF while parsing a string at line 1 column 130
+  offset= 30  injected=extra_field                rule=extra_forbidden      undeclared_column: Extra inputs are not permitted
+  offset= 44  injected=null_zone_id               rule=string_type          zone_id: Input should be a valid string
+  offset= 45  injected=over_capacity              rule=value_error          <root>: Value error, occupancy_estimate 999999 exceeds 150% of zone MINA_CAMP_A capacity 15000 (
+  offset= 56  injected=negative_entries           rule=greater_than_equal   entries: Input should be greater than or equal to 0
+  offset= 61  injected=unknown_zone               rule=value_error          zone_id: Value error, unknown zone_id 'MATAF_99' - not present in zones.csv reference set
+  offset= 74  injected=future_timestamp           rule=value_error          event_time: Value error, event_time '2026-08-08T20:42:13.109885+00:00' is in the future
+  offset= 79  injected=string_for_int             rule=int_type             entries: Input should be a valid integer
+  offset= 82  injected=bad_sensor_status          rule=literal_error        sensor_status: Input should be 'OK', 'DEGRADED' or 'OFFLINE'
+  offset= 85  injected=missing_event_id           rule=missing              event_id: Field required
+  offset= 88  injected=malformed_json             rule=json_invalid         <root>: Invalid JSON: EOF while parsing a string at line 1 column 126
+  offset= 98  injected=extra_field                rule=extra_forbidden      undeclared_column: Extra inputs are not permitted
+  offset= 99  injected=null_zone_id               rule=string_type          zone_id: Input should be a valid string
+
+====================================================================================
+STRICT-MODE COERCION REJECTION (the headline case)
+====================================================================================
+  The JSON string "1500" was refused for an integer field:
+    rule   : int_type
+    reason : entries: Input should be a valid integer
+  The JSON string "1500" was refused for an integer field:
+    rule   : int_type
+    reason : entries: Input should be a valid integer
+
+  Without ConfigDict(strict=True), Pydantic would coerce "1500" to 1500
+  and this record would enter bronze looking perfectly valid.
+
+DEMO PASSED

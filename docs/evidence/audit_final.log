@@ -1,0 +1,24 @@
+== anti-substitution audit ==
+== required real dependencies ==
+  ✓ confluent_kafka importable
+  ✓ deltalake importable
+  ✓ polars importable
+  ✓ qdrant_client importable
+  ✓ great_expectations importable
+  ✓ openlineage importable
+  ✓ airflow importable (separate venv)
+== real artifacts on disk ==
+  ✓ delta/bronze_zone_occupancy has a real _delta_log (19 commit(s))
+  ✓ delta/silver_zone_occupancy has a real _delta_log (1 commit(s))
+  ✓ delta/gold_zone_hourly has a real _delta_log (1 commit(s))
+  ✓ delta/quarantine has a real _delta_log (21 commit(s))
+== real broker ==
+  ✓ Kafka broker responds to a real admin call
+== real lineage events ==
+  ✓ START events emitted: 8
+  ✓ COMPLETE events emitted: 8
+  ✓ FAIL events emitted: 0
+== secrets ==
+  ✓ .env not tracked
+  ✓ no key in history
+AUDIT PASSED
