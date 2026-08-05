@@ -86,7 +86,8 @@ SILVER_REQUEST_COLUMNS = [
 ]
 
 
-def silver_requests_suite_expectations() -> list[tuple[str, dict]]:
+def silver_requests_suite_expectations(row_count_min: int = 1,
+                                       row_count_max: int = 100_000) -> list[tuple[str, dict]]:
     return [
         # Proves the MERGE produced current-state, not an append: if the merge
         # had inserted instead of updated, request_id would repeat.
@@ -117,7 +118,11 @@ def silver_requests_suite_expectations() -> list[tuple[str, dict]]:
         # pilgrim_ref or reporter_phone ever reappeared, this fails.
         ("expect_table_columns_to_match_set",
          {"column_set": SILVER_REQUEST_COLUMNS, "exact_match": True}),
-        ("expect_table_row_count_to_be_between", {"min_value": 1, "max_value": 100_000}),
+        # Volume pillar for silver. The upstream contract keeps malformed rows
+        # out of bronze entirely, so a feed that degrades badly shows up here as
+        # a shortfall in *current-state requests*, not as bad values.
+        ("expect_table_row_count_to_be_between",
+         {"min_value": row_count_min, "max_value": row_count_max}),
     ]
 
 

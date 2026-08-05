@@ -51,6 +51,10 @@ DEFAULT_UNIQUE_REQUESTS = 2_500
 # healthy run lands ~186k rows; 150k leaves headroom for normal variation but
 # is far above what a 40%-corruption run can deliver.
 BRONZE_MIN_ROWS = 150_000
+# Volume-pillar floor for the silver gate. A healthy run produces one
+# current-state row per unique request (~2,500); 2,000 leaves headroom for
+# cancellations and rejected first-events.
+SILVER_MIN_ROWS = 2_000
 
 
 def _run_stage(module: str, args: list[str], task_id: str) -> str:
@@ -97,12 +101,17 @@ def produce_test_events(**context) -> dict:
     _run_stage("src.ingestion.producers.occupancy_producer",
                ["--events", str(events), "--corrupt-rate", str(corrupt_rate), "--seed", "42"],
                "produce_test_events")
+    # `unique_requests` is overridable so the GATE 2 failure demo can simulate an
+    # upstream feed that delivered a fraction of the expected requests.
+    unique_requests = int(conf.get("unique_requests", DEFAULT_UNIQUE_REQUESTS))
+    request_events = int(conf.get("request_events", DEFAULT_REQUEST_EVENTS))
     _run_stage("src.ingestion.producers.service_request_producer",
-               ["--events", str(DEFAULT_REQUEST_EVENTS),
-                "--requests", str(DEFAULT_UNIQUE_REQUESTS),
+               ["--events", str(request_events),
+                "--requests", str(unique_requests),
                 "--corrupt-rate", str(corrupt_rate), "--seed", "42"],
                "produce_test_events")
-    return {"events": events, "corrupt_rate": corrupt_rate}
+    return {"events": events, "corrupt_rate": corrupt_rate,
+            "unique_requests": unique_requests}
 
 
 def ingest_bronze_occupancy(**context) -> dict:
@@ -130,7 +139,9 @@ def validate_bronze(**context) -> dict:
 
 
 def validate_silver(**context) -> dict:
-    _run_stage("src.quality.run_gate", ["--layer", "silver"], "validate_silver")
+    _run_stage("src.quality.run_gate",
+               ["--layer", "silver", "--min-rows", str(SILVER_MIN_ROWS)],
+               "validate_silver")
     return {"gate": "silver", "status": "passed"}
 
 

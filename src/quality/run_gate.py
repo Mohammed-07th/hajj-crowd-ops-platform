@@ -61,7 +61,7 @@ def main() -> int:
         if args.layer == "bronze":
             expectations = bronze_suite_expectations(args.min_rows, args.max_rows)
         elif args.layer == "silver":
-            expectations = silver_requests_suite_expectations()
+            expectations = silver_requests_suite_expectations(args.min_rows, args.max_rows)
         else:
             expectations = gold_suite_expectations()
 
