@@ -1,0 +1,68 @@
+====================================================================================================
+QUARANTINE TABLE - 80,186 rejected records
+====================================================================================================
+
+--- rejections by rule (failed_rules) ---
+shape: (8, 2)
+┌────────────────────┬───────┐
+│ rules              ┆ count │
+│ ---                ┆ ---   │
+│ str                ┆ u32   │
+╞════════════════════╪═══════╡
+│ value_error        ┆ 23945 │
+│ int_type           ┆ 8286  │
+│ literal_error      ┆ 8013  │
+│ missing            ┆ 8012  │
+│ json_invalid       ┆ 8007  │
+│ extra_forbidden    ┆ 7982  │
+│ string_type        ┆ 7973  │
+│ greater_than_equal ┆ 7968  │
+└────────────────────┴───────┘
+
+--- rejections by source topic / partition ---
+shape: (3, 3)
+┌────────────────────┬───────────┬───────┐
+│ source_topic       ┆ partition ┆ count │
+│ ---                ┆ ---       ┆ ---   │
+│ str                ┆ i32       ┆ u32   │
+╞════════════════════╪═══════════╪═══════╡
+│ zone_occupancy_raw ┆ 0         ┆ 25073 │
+│ zone_occupancy_raw ┆ 1         ┆ 29928 │
+│ zone_occupancy_raw ┆ 2         ┆ 25185 │
+└────────────────────┴───────────┴───────┘
+
+--- sample of 5 rejections with reasons ---
+
+  partition=1 offset=58667
+  reason : event_id: Field required
+  rules  : ["missing"]
+  payload: {"zone_id": "MATAF_02", "gate_id": "G-MATAF_02-N", "event_time": "2026-05-29T11:24:10.368000Z", "entries": 380, "exits": 249, "occupancy_estimate": 19...
+
+  partition=1 offset=58669
+  reason : event_id: Field required
+  rules  : ["missing"]
+  payload: {"zone_id": "ARAFAT_Z1", "gate_id": "G-ARAFAT_Z1-E", "event_time": "2026-05-29T11:24:58.752000Z", "entries": 6, "exits": 4, "occupancy_estimate": 399,...
+
+  partition=1 offset=58672
+  reason : event_id: Field required
+  rules  : ["missing"]
+  payload: {"zone_id": "MASAA_L1", "gate_id": "G-MASAA_L1-W", "event_time": "2026-05-29T11:24:58.752000Z", "entries": 388, "exits": 242, "occupancy_estimate": 12...
+
+  partition=1 offset=58675
+  reason : zone_id: Value error, unknown zone_id 'MATAF_99' - not present in zones.csv reference set
+  rules  : ["value_error"]
+  payload: {"event_id": "e669574d-bdab-4084-9f09-354f8997e0ac", "zone_id": "MATAF_99", "gate_id": "G-ARAFAT_Z1-N", "event_time": "2026-05-29T11:25:47.136000Z", "...
+
+  partition=1 offset=58676
+  reason : event_time: Value error, event_time '2026-08-08T19:29:29.100103+00:00' is in the future
+  rules  : ["value_error"]
+  payload: {"event_id": "98a55a22-3764-49ff-a58d-35f59226ec46", "zone_id": "DIRIYAH_TURAIF", "gate_id": "G-DIRIYAH_TURAIF-S", "event_time": "2026-08-08T19:29:29....
+
+====================================================================================================
+Every rejected record carries a machine-readable rule id and a human-readable reason.
+====================================================================================================
+
+{
+  "quarantined_total": 80186,
+  "distinct_rules": 8
+}

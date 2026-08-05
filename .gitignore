@@ -10,6 +10,10 @@
 .cache/
 *.log
 
+# ...but captured evidence IS the deliverable and must be tracked, even though
+# most of it has a .log extension.
+!docs/evidence/**
+
 # --- python ----------------------------------------------------------------
 __pycache__/
 *.pyc

@@ -1,0 +1,63 @@
+====================================================================================================
+QUARANTINE TABLE - 14,157 rejected records
+====================================================================================================
+
+--- rejections by rule (failed_rules) ---
+shape: (8, 2)
+┌────────────────────┬───────┐
+│ rules              ┆ count │
+│ ---                ┆ ---   │
+│ str                ┆ u32   │
+╞════════════════════╪═══════╡
+│ value_error        ┆ 4221  │
+│ int_type           ┆ 1462  │
+│ json_invalid       ┆ 1449  │
+│ greater_than_equal ┆ 1445  │
+│ string_type        ┆ 1423  │
+│ literal_error      ┆ 1402  │
+│ missing            ┆ 1390  │
+│ extra_forbidden    ┆ 1365  │
+└────────────────────┴───────┘
+
+--- rejections by source topic / partition ---
+shape: (3, 3)
+┌────────────────────┬───────────┬───────┐
+│ source_topic       ┆ partition ┆ count │
+│ ---                ┆ ---       ┆ ---   │
+│ str                ┆ i32       ┆ u32   │
+╞════════════════════╪═══════════╪═══════╡
+│ zone_occupancy_raw ┆ 0         ┆ 4418  │
+│ zone_occupancy_raw ┆ 1         ┆ 5326  │
+│ zone_occupancy_raw ┆ 2         ┆ 4413  │
+└────────────────────┴───────────┴───────┘
+
+--- sample of 4 rejections with reasons ---
+
+  partition=1 offset=68719
+  reason : event_id: Field required
+  rules  : ["missing"]
+  payload: {"zone_id": "ARAFAT_Z1", "gate_id": "G-ARAFAT_Z1-E", "event_time": "2026-05-30T09:55:41.952000Z", "entries": 18, "exits": 15, "occupancy_estimate": 40...
+
+  partition=1 offset=68722
+  reason : <root>: Invalid JSON: EOF while parsing a string at line 1 column 130
+  rules  : ["json_invalid"]
+  payload: {"event_id": "1c52854c-7e09-4283-97ae-d2cf3c9f9ad9", "zone_id": "MASAA_L1", "gate_id": "G-MASAA_L1-S", "event_time": "2026-05-30T0
+
+  partition=1 offset=68736
+  reason : <root>: Value error, occupancy_estimate 999999 exceeds 150% of zone ALULA_HEGRA capacity 3000 (ceiling 4500)
+  rules  : ["value_error"]
+  payload: {"event_id": "eae95d77-8b35-452b-bc45-814ff034aa9f", "zone_id": "ALULA_HEGRA", "gate_id": "G-ALULA_HEGRA-W", "event_time": "2026-05-30T09:58:07.104000...
+
+  partition=1 offset=68739
+  reason : undeclared_column: Extra inputs are not permitted
+  rules  : ["extra_forbidden"]
+  payload: {"event_id": "6020b520-7537-491c-a548-f65fcd2a1c66", "zone_id": "JAM_BRIDGE_L1", "gate_id": "G-JAM_BRIDGE_L1-N", "event_time": "2026-05-30T09:58:07.10...
+
+====================================================================================================
+Every rejected record carries a machine-readable rule id and a human-readable reason.
+====================================================================================================
+
+{
+  "quarantined_total": 14157,
+  "distinct_rules": 8
+}
