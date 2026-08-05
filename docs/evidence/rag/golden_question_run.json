@@ -1,0 +1,631 @@
+{
+  "summary": {
+    "total": 9,
+    "retrieval_hits": 9,
+    "citation_hits": 9,
+    "fact_hits": 9,
+    "degraded": 0
+  },
+  "results": [
+    {
+      "id": "q1_escalation_authority",
+      "question": "MATAF_01 has been above 90% capacity for 12 minutes. What is the escalation procedure and who authorizes diversion?",
+      "language": "en",
+      "expected_docs": [
+        "SOP-CS-011",
+        "SOP-CS-004"
+      ],
+      "retrieved_docs": [
+        "SOP-CS-011",
+        "SOP-CS-011",
+        "SOP-CS-011",
+        "SOP-CS-011",
+        "SOP-CS-004"
+      ],
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "fact_hit": true,
+      "answer": "MATAF_01 has been above 90% for 12 minutes, which exceeds the **5-minute sustained threshold** for CRITICAL escalation defined in SOP-CS-004 §3.1 [5, SOP-CS-004]. The zone is therefore in **CRITICAL (90–94%)** status and the following procedure applies:\n\n1. **SOC Controller assumes control of the zone** (already required at the 5-minute mark) [1, SOP-CS-011].\n2. **Inflow must be stopped entirely**; contraflow egress opened; arriving flow diverted to an alternate zone [3, SOP-CS-011].\n3. **Diversion at CRITICAL is authorised by the SOC Controller** [4, SOP-CS-011].\n4. **Duty Operations Director and Civil Defence Liaison must be notified immediately** (the 95% single-reading trigger also requires immediate notification, but at 90% sustained the Duty Operations Director is already required to be notified) [1, SOP-CS-011]; [3, SOP-CS-011].\n\nIf any of these actions (SOC control, inflow stop, diversion, notifications) have not yet occurred, treat it as a **reportable failure under SOP-OPS-020** [1, SOP-CS-011].",
+      "model_used": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "from_cache": false,
+      "degraded": false,
+      "retrieval_trace": [
+        {
+          "chunk_id": "SOP-CS-011::6",
+          "doc_code": "SOP-CS-011",
+          "section": "6. Sustained-threshold requirement",
+          "dense_rank": 3,
+          "bm25_rank": 1,
+          "fused_score": 0.032266,
+          "rerank_score": 4.4719
+        },
+        {
+          "chunk_id": "SOP-CS-011::7",
+          "doc_code": "SOP-CS-011",
+          "section": "7. Records and review",
+          "dense_rank": 7,
+          "bm25_rank": 11,
+          "fused_score": 0.02901,
+          "rerank_score": 1.5184
+        },
+        {
+          "chunk_id": "SOP-CS-011::3",
+          "doc_code": "SOP-CS-011",
+          "section": "3. Authority matrix",
+          "dense_rank": 2,
+          "bm25_rank": 19,
+          "fused_score": 0.028787,
+          "rerank_score": 1.2992
+        },
+        {
+          "chunk_id": "SOP-CS-011::1",
+          "doc_code": "SOP-CS-011",
+          "section": "1. Purpose",
+          "dense_rank": 1,
+          "bm25_rank": 2,
+          "fused_score": 0.032522,
+          "rerank_score": 1.1616
+        },
+        {
+          "chunk_id": "SOP-CS-004::4",
+          "doc_code": "SOP-CS-004",
+          "section": "3.1 Sustained-threshold rule",
+          "dense_rank": 29,
+          "bm25_rank": 4,
+          "fused_score": 0.026861,
+          "rerank_score": 0.5221
+        }
+      ]
+    },
+    {
+      "id": "q2_p1_medical_sla",
+      "question": "What is the response-time SLA for a P1 medical request?",
+      "language": "en",
+      "expected_docs": [
+        "SOP-OPS-001"
+      ],
+      "retrieved_docs": [
+        "SOP-MED-002",
+        "SOP-MED-002",
+        "SOP-OPS-001",
+        "SOP-MED-002",
+        "SOP-OPS-001"
+      ],
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "fact_hit": true,
+      "answer": "The response-time SLA for a P1 medical request is **4 minutes** [2, SOP-MED-002] [3, SOP-OPS-001].",
+      "model_used": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "from_cache": true,
+      "degraded": false,
+      "retrieval_trace": [
+        {
+          "chunk_id": "SOP-MED-002::2",
+          "doc_code": "SOP-MED-002",
+          "section": "2. P1 medical definition",
+          "dense_rank": 2,
+          "bm25_rank": 3,
+          "fused_score": 0.032002,
+          "rerank_score": 4.5754
+        },
+        {
+          "chunk_id": "SOP-MED-002::1",
+          "doc_code": "SOP-MED-002",
+          "section": "1. Purpose",
+          "dense_rank": 3,
+          "bm25_rank": 2,
+          "fused_score": 0.032002,
+          "rerank_score": 4.5352
+        },
+        {
+          "chunk_id": "SOP-OPS-001::3",
+          "doc_code": "SOP-OPS-001",
+          "section": "3. The SLA matrix",
+          "dense_rank": 1,
+          "bm25_rank": 1,
+          "fused_score": 0.032787,
+          "rerank_score": 3.8999
+        },
+        {
+          "chunk_id": "SOP-MED-002::4",
+          "doc_code": "SOP-MED-002",
+          "section": "4. P1 protocol",
+          "dense_rank": 7,
+          "bm25_rank": 5,
+          "fused_score": 0.03031,
+          "rerank_score": 2.8668
+        },
+        {
+          "chunk_id": "SOP-OPS-001::6",
+          "doc_code": "SOP-OPS-001",
+          "section": "6. Escalation on breach",
+          "dense_rank": 6,
+          "bm25_rank": 10,
+          "fused_score": 0.029437,
+          "rerank_score": 2.0973
+        }
+      ]
+    },
+    {
+      "id": "q3_missing_child",
+      "question": "A child has been reported missing at MASAA_L2 - what are the first three steps?",
+      "language": "en",
+      "expected_docs": [
+        "SOP-SEC-007"
+      ],
+      "retrieved_docs": [
+        "SOP-SEC-007",
+        "SOP-SEC-007",
+        "FAQ-001",
+        "SOP-CS-015",
+        "SOP-SEC-007"
+      ],
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "fact_hit": true,
+      "answer": "**First three steps (in this order) when a child is reported missing at MASAA_L2:**\n\n1. **Contain the reporter and record the description.** Do not let the family member walk away to search. Record: name, age, height, clothing colours, footwear, distinguishing features, language spoken, wristband or group identifier, and the exact location and time last seen. [1, SOP-SEC-007]\n\n2. **Raise the request immediately as LOST_PERSON P2** in the operations platform and broadcast the description on the sector radio channel. The broadcast must happen within the first minute — before any search begins. A missing child is always P2 or higher; it is never P3. [1, SOP-SEC-007] [2, SOP-SEC-007]\n\n3. **Seal the immediate area and search outward from the last known point.** Marshals at the zone's exits hold position and observe rather than joining the search. A child moves outward from where they were lost; staff who leave the exits to search inward let them past. [1, SOP-SEC-007]\n\nOnly after these three steps are complete does the wider search escalate. [1, SOP-SEC-007]",
+      "model_used": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "from_cache": false,
+      "degraded": false,
+      "retrieval_trace": [
+        {
+          "chunk_id": "SOP-SEC-007::2",
+          "doc_code": "SOP-SEC-007",
+          "section": "2. The first three steps",
+          "dense_rank": 1,
+          "bm25_rank": 1,
+          "fused_score": 0.032787,
+          "rerank_score": 6.1914
+        },
+        {
+          "chunk_id": "SOP-SEC-007::1",
+          "doc_code": "SOP-SEC-007",
+          "section": "1. Purpose",
+          "dense_rank": 3,
+          "bm25_rank": 3,
+          "fused_score": 0.031746,
+          "rerank_score": -2.922
+        },
+        {
+          "chunk_id": "FAQ-001::4",
+          "doc_code": "FAQ-001",
+          "section": "\"I have lost my child.\" / \"فقدت طفلي.\"",
+          "dense_rank": 2,
+          "bm25_rank": 5,
+          "fused_score": 0.031514,
+          "rerank_score": -5.3334
+        },
+        {
+          "chunk_id": "SOP-CS-015::6",
+          "doc_code": "SOP-CS-015",
+          "section": "5. Routes",
+          "dense_rank": 5,
+          "bm25_rank": 30,
+          "fused_score": 0.026496,
+          "rerank_score": -5.4023
+        },
+        {
+          "chunk_id": "SOP-SEC-007::4",
+          "doc_code": "SOP-SEC-007",
+          "section": "4. Family reunification points",
+          "dense_rank": 4,
+          "bm25_rank": 11,
+          "fused_score": 0.02971,
+          "rerank_score": -5.4387
+        }
+      ]
+    },
+    {
+      "id": "q4_wbgt_cooling",
+      "question": "What WBGT reading triggers cooling measures?",
+      "language": "en",
+      "expected_docs": [
+        "SOP-MED-009"
+      ],
+      "retrieved_docs": [
+        "SOP-MED-009",
+        "SOP-MED-009",
+        "SOP-MED-009",
+        "SOP-MED-009",
+        "SOP-MED-002"
+      ],
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "fact_hit": true,
+      "answer": "Cooling measures are triggered at a WBGT of **28 °C** — the Level 1 activation point. [4, SOP-MED-009]",
+      "model_used": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "from_cache": false,
+      "degraded": false,
+      "retrieval_trace": [
+        {
+          "chunk_id": "SOP-MED-009::2",
+          "doc_code": "SOP-MED-009",
+          "section": "2. WBGT",
+          "dense_rank": 1,
+          "bm25_rank": 3,
+          "fused_score": 0.032266,
+          "rerank_score": 4.8787
+        },
+        {
+          "chunk_id": "SOP-MED-009::1",
+          "doc_code": "SOP-MED-009",
+          "section": "1. Purpose",
+          "dense_rank": 3,
+          "bm25_rank": 1,
+          "fused_score": 0.032266,
+          "rerank_score": 4.8559
+        },
+        {
+          "chunk_id": "SOP-MED-009::8",
+          "doc_code": "SOP-MED-009",
+          "section": "8. Reporting",
+          "dense_rank": 4,
+          "bm25_rank": 4,
+          "fused_score": 0.03125,
+          "rerank_score": 3.9592
+        },
+        {
+          "chunk_id": "SOP-MED-009::3",
+          "doc_code": "SOP-MED-009",
+          "section": "3. Activation thresholds",
+          "dense_rank": 2,
+          "bm25_rank": 2,
+          "fused_score": 0.032258,
+          "rerank_score": 3.5808
+        },
+        {
+          "chunk_id": "SOP-MED-002::7",
+          "doc_code": "SOP-MED-002",
+          "section": "7. Heat-related presentations",
+          "dense_rank": 5,
+          "bm25_rank": 6,
+          "fused_score": 0.030536,
+          "rerank_score": 1.8488
+        }
+      ]
+    },
+    {
+      "id": "q5_evacuation_arabic",
+      "question": "ما هي إجراءات الإخلاء؟",
+      "language": "ar",
+      "expected_docs": [
+        "SOP-CS-015"
+      ],
+      "retrieved_docs": [
+        "SOP-CS-015",
+        "FAQ-001",
+        "FAQ-001",
+        "SOP-CS-015",
+        "FAQ-001"
+      ],
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "fact_hit": true,
+      "answer": "**إجراءات الإخلاء:**\n\n1. **عند إعلان الإخلاء:** تحرك بهدوء في الاتجاه المذكور في الإعلان، واتبع تعليمات الموظفين، ولا تعد لأخذ أمتعتك. الموظفون يتحركون مع الحشد وسيوجهونك إلى أقرب مخرج مفتوح. كل موقع لديه منطقة تجميع [2, FAQ-001].\n\n2. **الإعلانات:** تُبث بالعربية والإنجليزية أولاً، ثم بلغات أخرى، وتكون قصيرة ومتكررة. يجب أن يتضمن الإعلان: ماذا تفعل، وفي أي اتجاه، ولا شيء آخر (مثال: \"تحركوا بهدوء نحو المخارج الشرقية\") [1, SOP-CS-015].\n\n3. **سلطة الإخلاء:** الإخلاء يتطلب موافقة مشتركة من **مدير العمليات المناوب** ومنسق **الدفاع المدني** — لا تكفي موافقة جهة واحدة [2, FAQ-001] [4, SOP-CS-015].\n\n4. **حالة الطوارئ القصوى:** حيث التأخير يكلف أرواحاً، أي **مراقب مركز العمليات (SOC Controller)** قد يأمر **بإخلاء جزئي فوري** لمنطقة واحدة فقط، ويجب إبلاغ الجهتين المخولتين خلال **60 ثانية**. هذه الصلاحية تغطي منطقة واحدة فقط ولا تستخدم لإخلاء الموقع كاملاً [4, SOP-CS-015].\n\nالإجراء الكامل بما في ذلك المحفزات، المسارات لكل موقع، وشروط إعادة الفتح موجود في **SOP-CS-015** [2, FAQ-001].",
+      "model_used": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "from_cache": false,
+      "degraded": false,
+      "retrieval_trace": [
+        {
+          "chunk_id": "SOP-CS-015::5",
+          "doc_code": "SOP-CS-015",
+          "section": "4.1 Announcement content — محتوى الإعلان",
+          "dense_rank": 3,
+          "bm25_rank": 7,
+          "fused_score": 0.030798,
+          "rerank_score": 7.2254
+        },
+        {
+          "chunk_id": "FAQ-001::5",
+          "doc_code": "FAQ-001",
+          "section": "\"What are the evacuation procedures?\" / \"ما هي إجراءات الإخلاء؟\"",
+          "dense_rank": 1,
+          "bm25_rank": 1,
+          "fused_score": 0.032787,
+          "rerank_score": 7.0727
+        },
+        {
+          "chunk_id": "FAQ-001::6",
+          "doc_code": "FAQ-001",
+          "section": "\"It is very hot — what should I do?\" / \"الجو حار جداً، ماذا أفعل؟\"",
+          "dense_rank": 13,
+          "bm25_rank": null,
+          "fused_score": 0.013699,
+          "rerank_score": 6.9459
+        },
+        {
+          "chunk_id": "SOP-CS-015::3",
+          "doc_code": "SOP-CS-015",
+          "section": "3. Authority — إجراءات الإخلاء",
+          "dense_rank": 2,
+          "bm25_rank": 2,
+          "fused_score": 0.032258,
+          "rerank_score": 6.8519
+        },
+        {
+          "chunk_id": "FAQ-001::3",
+          "doc_code": "FAQ-001",
+          "section": "\"Where do I get water?\" / \"أين أجد الماء؟\"",
+          "dense_rank": 14,
+          "bm25_rank": null,
+          "fused_score": 0.013514,
+          "rerank_score": 5.758
+        }
+      ]
+    },
+    {
+      "id": "q6_density_limit",
+      "question": "What is the crowd density limit in persons per square metre?",
+      "language": "en",
+      "expected_docs": [
+        "SOP-CS-004"
+      ],
+      "retrieved_docs": [
+        "SOP-CS-004",
+        "SOP-CS-015",
+        "SOP-CS-004",
+        "SOP-MED-009",
+        "SOP-CS-004"
+      ],
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "fact_hit": true,
+      "answer": "The critical crowd density limit is **4.0 persons/m²**. At and above this density, individuals lose the ability to control their own movement and crowd-quake propagation becomes possible [1, SOP-CS-004]. This threshold also triggers evacuation when density reaches 4.0 persons/m² and continues rising despite inflow being stopped [2, SOP-CS-015].",
+      "model_used": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "from_cache": false,
+      "degraded": false,
+      "retrieval_trace": [
+        {
+          "chunk_id": "SOP-CS-004::2",
+          "doc_code": "SOP-CS-004",
+          "section": "2. Density levels of service",
+          "dense_rank": 1,
+          "bm25_rank": 1,
+          "fused_score": 0.032787,
+          "rerank_score": 4.0736
+        },
+        {
+          "chunk_id": "SOP-CS-015::2",
+          "doc_code": "SOP-CS-015",
+          "section": "2. Evacuation triggers",
+          "dense_rank": 11,
+          "bm25_rank": 9,
+          "fused_score": 0.028577,
+          "rerank_score": -2.1207
+        },
+        {
+          "chunk_id": "SOP-CS-004::7",
+          "doc_code": "SOP-CS-004",
+          "section": "6. Interaction with heat stress",
+          "dense_rank": 2,
+          "bm25_rank": 8,
+          "fused_score": 0.030835,
+          "rerank_score": -5.3132
+        },
+        {
+          "chunk_id": "SOP-MED-009::4",
+          "doc_code": "SOP-MED-009",
+          "section": "4. Interaction with crowd density",
+          "dense_rank": 4,
+          "bm25_rank": 13,
+          "fused_score": 0.029324,
+          "rerank_score": -7.163
+        },
+        {
+          "chunk_id": "SOP-CS-004::4",
+          "doc_code": "SOP-CS-004",
+          "section": "3.1 Sustained-threshold rule",
+          "dense_rank": 7,
+          "bm25_rank": 7,
+          "fused_score": 0.029851,
+          "rerank_score": -7.3144
+        }
+      ]
+    },
+    {
+      "id": "q7_p1_security_notification",
+      "question": "Who must be notified when a P1 security incident is raised?",
+      "language": "en",
+      "expected_docs": [
+        "SOP-OPS-020"
+      ],
+      "retrieved_docs": [
+        "SOP-OPS-020",
+        "SOP-SEC-007",
+        "SOP-OPS-001",
+        "SOP-OPS-001",
+        "SOP-OPS-020"
+      ],
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "fact_hit": true,
+      "answer": "When a P1 security incident is raised it is treated as **minimum severity S2**. The immediate notifications are:\n\n- **SOC Controller**\n- **Duty Operations Director**  \n- **Civil Defence Liaison**\n\nThese three are informed **immediately** [1, SOP-OPS-020].\n\nWithin **30 minutes**, the **Security Directorate** is informed [1, SOP-OPS-020].\n\nAt **handover**, **all Sector Supervisors** are briefed [1, SOP-OPS-020].\n\n(SECURITY requests are P1 only, so every security service request triggers at least this S2 chain [3, SOP-OPS-001].)",
+      "model_used": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "from_cache": false,
+      "degraded": false,
+      "retrieval_trace": [
+        {
+          "chunk_id": "SOP-OPS-020::3",
+          "doc_code": "SOP-OPS-020",
+          "section": "3. Notification matrix — who is informed",
+          "dense_rank": 1,
+          "bm25_rank": 1,
+          "fused_score": 0.032787,
+          "rerank_score": 4.3265
+        },
+        {
+          "chunk_id": "SOP-SEC-007::3",
+          "doc_code": "SOP-SEC-007",
+          "section": "3. Timers",
+          "dense_rank": 9,
+          "bm25_rank": 4,
+          "fused_score": 0.030118,
+          "rerank_score": 4.1022
+        },
+        {
+          "chunk_id": "SOP-OPS-001::4",
+          "doc_code": "SOP-OPS-001",
+          "section": "4. Priority assignment",
+          "dense_rank": 2,
+          "bm25_rank": 2,
+          "fused_score": 0.032258,
+          "rerank_score": 1.1181
+        },
+        {
+          "chunk_id": "SOP-OPS-001::6",
+          "doc_code": "SOP-OPS-001",
+          "section": "6. Escalation on breach",
+          "dense_rank": 5,
+          "bm25_rank": 20,
+          "fused_score": 0.027885,
+          "rerank_score": -0.6629
+        },
+        {
+          "chunk_id": "SOP-OPS-020::1",
+          "doc_code": "SOP-OPS-020",
+          "section": "1. Purpose",
+          "dense_rank": 23,
+          "bm25_rank": 5,
+          "fused_score": 0.027433,
+          "rerank_score": -2.4405
+        }
+      ]
+    },
+    {
+      "id": "q8_water_station_interval",
+      "question": "What is the servicing interval for water stations?",
+      "language": "en",
+      "expected_docs": [
+        "SOP-SAN-003"
+      ],
+      "retrieved_docs": [
+        "SOP-SAN-003",
+        "SOP-SAN-003",
+        "SOP-MED-009",
+        "SOP-SAN-003",
+        "SOP-SAN-003"
+      ],
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "fact_hit": true,
+      "answer": "The baseline servicing interval for a water station is **every 4 hours** under normal operations. This interval shortens based on conditions:\n\n- **Every 2 hours** when the zone is at ELEVATED or HIGH utilisation, or during Heat Level 1–2 (WBGT 28–31.9 °C) [2, SOP-SAN-003]\n- **Every hour** during Heat Level 3–4 (WBGT ≥ 32 °C) [2, SOP-SAN-003]\n- **Every 6 hours** overnight (23:00–04:00) under normal heat [2, SOP-SAN-003]\n\nA servicing visit that finds a station below 25% capacity halves that station's interval until two consecutive visits find it above 50% [2, SOP-SAN-003].",
+      "model_used": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "from_cache": false,
+      "degraded": false,
+      "retrieval_trace": [
+        {
+          "chunk_id": "SOP-SAN-003::1",
+          "doc_code": "SOP-SAN-003",
+          "section": "1. Purpose",
+          "dense_rank": 3,
+          "bm25_rank": 1,
+          "fused_score": 0.032266,
+          "rerank_score": 6.6117
+        },
+        {
+          "chunk_id": "SOP-SAN-003::2",
+          "doc_code": "SOP-SAN-003",
+          "section": "2. Water station servicing intervals",
+          "dense_rank": 1,
+          "bm25_rank": 2,
+          "fused_score": 0.032522,
+          "rerank_score": 6.3111
+        },
+        {
+          "chunk_id": "SOP-MED-009::5",
+          "doc_code": "SOP-MED-009",
+          "section": "5. Hydration and water provision",
+          "dense_rank": 7,
+          "bm25_rank": 9,
+          "fused_score": 0.029418,
+          "rerank_score": 4.5217
+        },
+        {
+          "chunk_id": "SOP-SAN-003::3",
+          "doc_code": "SOP-SAN-003",
+          "section": "3. Sanitation servicing intervals",
+          "dense_rank": 2,
+          "bm25_rank": 14,
+          "fused_score": 0.029643,
+          "rerank_score": 4.3388
+        },
+        {
+          "chunk_id": "SOP-SAN-003::5",
+          "doc_code": "SOP-SAN-003",
+          "section": "5. Coverage standards",
+          "dense_rank": 6,
+          "bm25_rank": 15,
+          "fused_score": 0.028485,
+          "rerank_score": 4.0661
+        }
+      ]
+    },
+    {
+      "id": "q9_out_of_scope",
+      "question": "What is the refund policy for a cancelled Umrah booking?",
+      "language": "en",
+      "expected_docs": [],
+      "retrieved_docs": [
+        "SOP-SEC-007",
+        "SOP-OPS-001",
+        "FAQ-001",
+        "SOP-CS-011",
+        "SOP-CS-011"
+      ],
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "fact_hit": true,
+      "answer": "This is not covered in the available procedures.",
+      "model_used": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "from_cache": false,
+      "degraded": false,
+      "retrieval_trace": [
+        {
+          "chunk_id": "SOP-SEC-007::6",
+          "doc_code": "SOP-SEC-007",
+          "section": "6. Closure",
+          "dense_rank": 12,
+          "bm25_rank": 1,
+          "fused_score": 0.030282,
+          "rerank_score": -10.0869
+        },
+        {
+          "chunk_id": "SOP-OPS-001::5",
+          "doc_code": "SOP-OPS-001",
+          "section": "5. Lifecycle",
+          "dense_rank": 19,
+          "bm25_rank": 2,
+          "fused_score": 0.028787,
+          "rerank_score": -10.983
+        },
+        {
+          "chunk_id": "FAQ-001::5",
+          "doc_code": "FAQ-001",
+          "section": "\"What are the evacuation procedures?\" / \"ما هي إجراءات الإخلاء؟\"",
+          "dense_rank": 29,
+          "bm25_rank": 11,
+          "fused_score": 0.02532,
+          "rerank_score": -11.2464
+        },
+        {
+          "chunk_id": "SOP-CS-011::5",
+          "doc_code": "SOP-CS-011",
+          "section": "5. Hold points",
+          "dense_rank": 4,
+          "bm25_rank": 28,
+          "fused_score": 0.026989,
+          "rerank_score": -11.2565
+        },
+        {
+          "chunk_id": "SOP-CS-011::6",
+          "doc_code": "SOP-CS-011",
+          "section": "6. Sustained-threshold requirement",
+          "dense_rank": null,
+          "bm25_rank": 24,
+          "fused_score": 0.011905,
+          "rerank_score": -11.2892
+        }
+      ]
+    }
+  ]
+}
