@@ -78,6 +78,49 @@ def bronze_suite_expectations(row_count_min: int, row_count_max: int) -> list[tu
     ]
 
 
+SILVER_REQUEST_COLUMNS = [
+    "request_id", "event_id", "zone_id", "category", "priority", "status",
+    "reported_at", "updated_at", "resolved_at", "reported_date", "age_minutes",
+    "crew_id", "reporter_language", "pilgrim_ref_hash", "reporter_phone_hash",
+    "description", "schema_version",
+]
+
+
+def silver_requests_suite_expectations() -> list[tuple[str, dict]]:
+    return [
+        # Proves the MERGE produced current-state, not an append: if the merge
+        # had inserted instead of updated, request_id would repeat.
+        ("expect_column_values_to_be_unique", {"column": "request_id"}),
+        ("expect_column_values_to_not_be_null", {"column": "request_id"}),
+        ("expect_column_values_to_be_in_set",
+         {"column": "status", "value_set": ["REPORTED", "ACKNOWLEDGED", "DISPATCHED",
+                                            "ON_SITE", "RESOLVED", "CANCELLED"]}),
+        ("expect_column_values_to_be_in_set",
+         {"column": "category", "value_set": ["MEDICAL", "LOST_PERSON", "CROWD_PRESSURE",
+                                              "SANITATION", "WATER", "WAYFINDING", "SECURITY"]}),
+        ("expect_column_values_to_be_in_set",
+         {"column": "priority", "value_set": ["P1", "P2", "P3", "P4"]}),
+        ("expect_column_pair_values_A_to_be_greater_than_B",
+         {"column_A": "updated_at", "column_B": "reported_at", "or_equal": True}),
+        # Conditional requirement: a crew must be assigned once dispatched.
+        # GE rejects single quotes inside row_condition (it must round-trip
+        # through JSON), so the value list uses double quotes.
+        ("expect_column_values_to_not_be_null",
+         {"column": "crew_id",
+          "row_condition": 'status in ["DISPATCHED", "ON_SITE", "RESOLVED"]',
+          "condition_parser": "pandas"}),
+        # Proves the hashing step ran.
+        ("expect_column_values_to_not_be_null", {"column": "pilgrim_ref_hash"}),
+        ("expect_column_values_to_not_be_null", {"column": "reporter_phone_hash"}),
+        # Proves raw PII was DROPPED. GE has no "expect column to not exist", so
+        # pinning the exact column set is how absence gets asserted: if
+        # pilgrim_ref or reporter_phone ever reappeared, this fails.
+        ("expect_table_columns_to_match_set",
+         {"column_set": SILVER_REQUEST_COLUMNS, "exact_match": True}),
+        ("expect_table_row_count_to_be_between", {"min_value": 1, "max_value": 100_000}),
+    ]
+
+
 def gold_suite_expectations() -> list[tuple[str, dict]]:
     return [
         ("expect_column_values_to_be_between",

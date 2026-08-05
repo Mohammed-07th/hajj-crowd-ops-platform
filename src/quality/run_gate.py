@@ -19,6 +19,7 @@ from src.quality.checkpoints import (
     gate,
     gold_suite_expectations,
     run_suite,
+    silver_requests_suite_expectations,
 )
 
 LAYERS = {
@@ -26,6 +27,11 @@ LAYERS = {
         "table": "bronze_zone_occupancy",
         "suite": "bronze_suite",
         "checkpoint": "bronze_checkpoint",
+    },
+    "silver": {
+        "table": "silver_service_requests",
+        "suite": "silver_requests_suite",
+        "checkpoint": "silver_requests_checkpoint",
     },
     "gold": {
         "table": "gold_zone_hourly",
@@ -54,6 +60,8 @@ def main() -> int:
 
         if args.layer == "bronze":
             expectations = bronze_suite_expectations(args.min_rows, args.max_rows)
+        elif args.layer == "silver":
+            expectations = silver_requests_suite_expectations()
         else:
             expectations = gold_suite_expectations()
 
