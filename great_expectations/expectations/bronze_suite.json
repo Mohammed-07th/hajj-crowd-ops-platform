@@ -98,7 +98,7 @@
       "expectation_type": "expect_table_row_count_to_be_between",
       "kwargs": {
         "max_value": 5000000,
-        "min_value": 100000
+        "min_value": 150000
       },
       "meta": {}
     }
