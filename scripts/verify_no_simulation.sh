@@ -15,10 +15,12 @@ set -u
 FOUND=0
 
 check() {  # $1 = pattern, $2 = why it is disqualifying
-  # --exclude this script: it contains every banned pattern as a literal, so
-  # without this it reports itself and the audit never passes.
+  # Exclude the two scripts that check FOR these patterns: both contain every
+  # banned string as a literal, so without this they report themselves and the
+  # audit can never pass.
   if grep -rEn --include='*.py' --include='*.sh' --include='*.yml' \
-       --exclude='verify_no_simulation.sh' "$1" src/ dags/ scripts/ 2>/dev/null; then
+       --exclude='verify_no_simulation.sh' --exclude='rubric_selfcheck.py' \
+       "$1" src/ dags/ scripts/ 2>/dev/null; then
     echo "  ✗ DISQUALIFYING: $2"
     FOUND=1
   fi
