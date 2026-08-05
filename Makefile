@@ -3,7 +3,8 @@ PY    := ./.venv/bin/python
 AF    := ./.venv-airflow/bin/airflow
 
 .PHONY: help up down ps topics seed reset produce ingest silver gold gate-bronze \
-        gate-silver schema-demo pipeline airflow audit test demo-failures clean
+        gate-silver schema-demo rag-index rag-proofs golden ask pipeline airflow \
+        audit test demo-failures clean
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -49,6 +50,18 @@ gate-silver:     ## run the silver GE checkpoint (exits non-zero on failure)
 
 schema-demo:     ## failure demo 2 - delta refuses a breaking schema change
 	PYTHONPATH=. $(PY) -m src.lakehouse.schema_demo
+
+rag-index:       ## chunk -> embed -> qdrant
+	PYTHONPATH=. $(PY) -m src.rag.index
+
+rag-proofs:      ## regenerate hybrid-search and rerank proof documents
+	PYTHONPATH=. $(PY) scripts/generate_rag_proofs.py
+
+golden:          ## run the golden question set and write evidence
+	PYTHONPATH=. $(PY) scripts/run_golden_questions.py
+
+ask:             ## ask the copilot: make ask Q="your question"
+	PYTHONPATH=. $(PY) -m src.rag.pipeline "$(Q)"
 
 pipeline: reset produce ingest gate-bronze silver gate-silver gold  ## full run, no airflow
 

@@ -151,6 +151,38 @@ def build_gold_zone_hourly(**context) -> dict:
     return {"rows": _tail_json(out).get("rows")}
 
 
+def refresh_rag_index(**context) -> dict:
+    out = _run_stage("src.rag.index", [], "refresh_rag_index")
+    result = _tail_json(out)
+    return {"chunks": result.get("chunks"), "points": result.get("points")}
+
+
+def smoke_test_rag(**context) -> dict:
+    """Ask one question end to end.
+
+    Fails SOFT on generation. Free models are rate-limited and occasionally
+    unavailable; a 429 from OpenRouter says nothing about whether this pipeline
+    is correct, and failing the DAG on it would make an otherwise valid run look
+    broken. Retrieval failing IS a real failure and is raised.
+    """
+    out = _run_stage("src.rag.pipeline",
+                     ["What is the response-time SLA for a P1 medical request?"],
+                     "smoke_test_rag")
+    result = _tail_json(out)
+    citations = result.get("citations") or []
+    if not citations:
+        raise AirflowException("smoke_test_rag: retrieval returned no citations")
+
+    if result.get("degraded"):
+        print("DEGRADED: retrieval succeeded but every free model was unavailable. "
+              "Marking the run as degraded rather than failed.", flush=True)
+    return {
+        "citations": len(citations),
+        "model_used": result.get("model_used"),
+        "degraded": bool(result.get("degraded")),
+    }
+
+
 def emit_task_failure_lineage(context) -> None:
     """default_args on_failure_callback -> OpenLineage FAIL for the task."""
     ti = context["task_instance"]
@@ -209,6 +241,8 @@ with DAG(
                                   python_callable=build_silver_requests_merge)
     t_gate2 = PythonOperator(task_id="validate_silver", python_callable=validate_silver)
     t_gold = PythonOperator(task_id="build_gold_zone_hourly", python_callable=build_gold_zone_hourly)
+    t_rag = PythonOperator(task_id="refresh_rag_index", python_callable=refresh_rag_index)
+    t_smoke = PythonOperator(task_id="smoke_test_rag", python_callable=smoke_test_rag)
 
     # Default trigger_rule (all_success) everywhere: when a gate fails,
     # everything downstream goes upstream_failed / skipped instead of running on
@@ -217,4 +251,7 @@ with DAG(
     start >> wait_for_sop_corpus >> t_produce
     t_produce >> [t_ingest_occ, t_ingest_req] >> t_gate1
     t_gate1 >> [t_silver_occ, t_silver_req] >> t_gate2
-    t_gate2 >> t_gold >> end
+    # The RAG index is derived state built from the SOP corpus, but it sits
+    # behind GATE 2 so a failed quality gate stops it too - re-indexing while
+    # the lakehouse is known-bad would publish an index nobody should trust.
+    t_gate2 >> t_gold >> t_rag >> t_smoke >> end

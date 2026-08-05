@@ -30,9 +30,14 @@ qdrant-client==1.11.3
 sentence-transformers==3.1.1
 rank-bm25==0.2.2
 openai==1.51.0
+# openai 1.51 passes `proxies=` to httpx, which httpx>=0.28 removed.
+httpx==0.27.2
 tenacity==9.0.0
 tiktoken==0.7.0
 
 # --- dev -------------------------------------------------------------------
 pytest==8.3.3
 python-dotenv==1.0.1
+pyyaml==6.0.2
+# headless chromium for scripted Airflow UI evidence capture
+playwright==1.47.0
