@@ -26,13 +26,25 @@ from confluent_kafka import Consumer, KafkaError, Producer
 
 from config.settings import settings
 from src.contracts.occupancy import ZoneOccupancyEvent
+from src.contracts.service_request import ServiceRequestEvent
 from src.ingestion.dlq import DLQWriter
 from src.lakehouse import delta_io
 from src.lineage.emitter import lineage_run
 
 CONSUMER_GROUP = "bronze-ingest-v1"
 
-BRONZE_SCHEMA = pa.schema([
+# Ingest metadata appended to every bronze row: where it came from, when it
+# landed. Any bronze row can be traced back to exact broker coordinates.
+_KAFKA_META = [
+    ("_kafka_topic", pa.string()),
+    ("_kafka_partition", pa.int32()),
+    ("_kafka_offset", pa.int64()),
+    ("_ingested_at", pa.timestamp("us", tz="UTC")),
+    ("_source_file", pa.string()),
+    ("ingest_date", pa.string()),
+]
+
+OCCUPANCY_SCHEMA = pa.schema([
     ("event_id", pa.string()),
     ("zone_id", pa.string()),
     ("gate_id", pa.string()),
@@ -42,24 +54,59 @@ BRONZE_SCHEMA = pa.schema([
     ("occupancy_estimate", pa.int32()),
     ("sensor_status", pa.string()),
     ("schema_version", pa.string()),
-    # Ingest metadata - bronze records where a row came from, so any row can be
-    # traced back to the exact broker coordinates that produced it.
-    ("_kafka_topic", pa.string()),
-    ("_kafka_partition", pa.int32()),
-    ("_kafka_offset", pa.int64()),
-    ("_ingested_at", pa.timestamp("us", tz="UTC")),
-    ("_source_file", pa.string()),
-    ("ingest_date", pa.string()),
+    *_KAFKA_META,
 ])
 
+SERVICE_REQUEST_SCHEMA = pa.schema([
+    ("event_id", pa.string()),
+    ("request_id", pa.string()),
+    ("zone_id", pa.string()),
+    ("category", pa.string()),
+    ("priority", pa.string()),
+    ("status", pa.string()),
+    ("reported_at", pa.timestamp("us", tz="UTC")),
+    ("updated_at", pa.timestamp("us", tz="UTC")),
+    ("resolved_at", pa.timestamp("us", tz="UTC")),
+    ("crew_id", pa.string()),
+    ("reporter_language", pa.string()),
+    # Bronze stores PII as received - bronze is the immutable raw record.
+    # Hashing happens in silver; see src/governance/pii.py.
+    ("pilgrim_ref", pa.string()),
+    ("reporter_phone", pa.string()),
+    ("description", pa.string()),
+    ("schema_version", pa.string()),
+    *_KAFKA_META,
+])
 
-def _to_arrow(records: list[dict]) -> pa.Table:
-    cols = {name: [r[name] for r in records] for name in BRONZE_SCHEMA.names}
-    return pa.table(cols, schema=BRONZE_SCHEMA)
+STREAMS = {
+    "occupancy": {
+        "topic": "zone_occupancy_raw",
+        "model": ZoneOccupancyEvent,
+        "schema": OCCUPANCY_SCHEMA,
+        "bronze_table": "bronze_zone_occupancy",
+        "datetime_fields": ("event_time",),
+    },
+    "requests": {
+        "topic": "service_requests_raw",
+        "model": ServiceRequestEvent,
+        "schema": SERVICE_REQUEST_SCHEMA,
+        "bronze_table": "bronze_service_requests",
+        "datetime_fields": ("reported_at", "updated_at", "resolved_at"),
+    },
+}
 
 
-def consume(topic: str, max_messages: int, batch_size: int, idle_timeout: float,
-            bronze_table: str) -> dict[str, int]:
+def _to_arrow(records: list[dict], schema: pa.Schema) -> pa.Table:
+    cols = {name: [r.get(name) for r in records] for name in schema.names}
+    return pa.table(cols, schema=schema)
+
+
+def consume(stream: str, max_messages: int, batch_size: int,
+            idle_timeout: float) -> dict[str, int]:
+    cfg = STREAMS[stream]
+    topic, model, schema = cfg["topic"], cfg["model"], cfg["schema"]
+    bronze_table = cfg["bronze_table"]
+
     consumer = Consumer({
         "bootstrap.servers": settings.kafka_bootstrap_servers,
         "group.id": CONSUMER_GROUP,
@@ -81,7 +128,7 @@ def consume(topic: str, max_messages: int, batch_size: int, idle_timeout: float,
     def flush() -> None:
         nonlocal batch
         if batch:
-            delta_io.append(bronze_table, _to_arrow(batch), partition_by=["ingest_date"])
+            delta_io.append(bronze_table, _to_arrow(batch, schema), partition_by=["ingest_date"])
             batch = []
         dlq.flush_to_quarantine()
         # Commit only once both the bronze rows and the quarantine rows are on
@@ -113,14 +160,17 @@ def consume(topic: str, max_messages: int, batch_size: int, idle_timeout: float,
                     # strict JSON mode accepts an ISO string as a datetime while
                     # still rejecting a quoted integer. Parsing first would put
                     # us in Python mode and break that distinction.
-                    event = ZoneOccupancyEvent.model_validate_json(raw)
+                    event = model.model_validate_json(raw)
                 except Exception as exc:  # ValidationError or JSON decode failure
                     dlq.reject(raw=raw, source_topic=topic,
                                partition=msg.partition(), offset=msg.offset(), exc=exc)
                     rejected += 1
                 else:
                     d = event.model_dump()
-                    d["event_time"] = event.event_time
+                    # model_dump() stringifies datetimes under some configs;
+                    # take the typed values straight off the model instead.
+                    for field in cfg["datetime_fields"]:
+                        d[field] = getattr(event, field)
                     d["_kafka_topic"] = topic
                     d["_kafka_partition"] = msg.partition()
                     d["_kafka_offset"] = msg.offset()
@@ -141,28 +191,25 @@ def consume(topic: str, max_messages: int, batch_size: int, idle_timeout: float,
         run.record_output_rows(bronze_table, accepted)
         run.record_output_rows("quarantine", rejected)
 
-    return {"accepted": accepted, "rejected": rejected}
+    return {"accepted": accepted, "rejected": rejected, "bronze_table": bronze_table}
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Consume Kafka -> validate -> bronze Delta / DLQ")
-    ap.add_argument("--topic", default="zone_occupancy_raw")
-    ap.add_argument("--bronze-table", default="bronze_zone_occupancy")
+    ap.add_argument("--stream", default="occupancy", choices=sorted(STREAMS))
     ap.add_argument("--max-messages", type=int, default=1_000_000)
     ap.add_argument("--batch-size", type=int, default=10_000)
     ap.add_argument("--idle-timeout", type=float, default=10.0)
     args = ap.parse_args()
 
     started = time.time()
-    stats = consume(args.topic, args.max_messages, args.batch_size,
-                    args.idle_timeout, args.bronze_table)
+    stats = consume(args.stream, args.max_messages, args.batch_size, args.idle_timeout)
     total = stats["accepted"] + stats["rejected"]
     print(json.dumps({
         **stats,
         "total": total,
         "rejection_rate_pct": round(100 * stats["rejected"] / max(total, 1), 2),
         "elapsed_seconds": round(time.time() - started, 1),
-        "bronze_table": args.bronze_table,
     }, indent=2), flush=True)
     return 0
 
