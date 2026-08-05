@@ -1,0 +1,134 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "silver_requests_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "kwargs": {
+        "column": "request_id"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "request_id"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "status",
+        "value_set": [
+          "REPORTED",
+          "ACKNOWLEDGED",
+          "DISPATCHED",
+          "ON_SITE",
+          "RESOLVED",
+          "CANCELLED"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "category",
+        "value_set": [
+          "MEDICAL",
+          "LOST_PERSON",
+          "CROWD_PRESSURE",
+          "SANITATION",
+          "WATER",
+          "WAYFINDING",
+          "SECURITY"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "priority",
+        "value_set": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_pair_values_a_to_be_greater_than_b",
+      "kwargs": {
+        "column_A": "updated_at",
+        "column_B": "reported_at",
+        "or_equal": true
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "crew_id",
+        "condition_parser": "pandas",
+        "row_condition": "status in [\"DISPATCHED\", \"ON_SITE\", \"RESOLVED\"]"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "pilgrim_ref_hash"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "reporter_phone_hash"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_table_columns_to_match_set",
+      "kwargs": {
+        "column_set": [
+          "request_id",
+          "event_id",
+          "zone_id",
+          "category",
+          "priority",
+          "status",
+          "reported_at",
+          "updated_at",
+          "resolved_at",
+          "reported_date",
+          "age_minutes",
+          "crew_id",
+          "reporter_language",
+          "pilgrim_ref_hash",
+          "reporter_phone_hash",
+          "description",
+          "schema_version"
+        ],
+        "exact_match": true
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "kwargs": {
+        "max_value": 100000,
+        "min_value": 1
+      },
+      "meta": {}
+    }
+  ],
+  "ge_cloud_id": null,
+  "meta": {
+    "great_expectations_version": "0.18.22"
+  }
+}

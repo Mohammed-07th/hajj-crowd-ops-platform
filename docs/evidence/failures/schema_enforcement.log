@@ -1,0 +1,58 @@
+
+==============================================================================
+SETUP - create a Delta table with occupancy_estimate as INT64
+==============================================================================
+event_id: string
+zone_id: string
+occupancy_estimate: int64
+rows: 2
+
+==============================================================================
+PART 1a - BREAKING CHANGE through the default (rust) engine
+==============================================================================
+appending occupancy_estimate as StringType ...
+  *** ACCEPTED - the rust engine safe-cast the value ***
+  stored occupancy_estimate: [1500, 30000, 21000]
+  NOTE: no error was raised. This is why the pipeline does not use this engine.
+  (restored to version 0; rows back to 2)
+
+==============================================================================
+PART 1b - BREAKING CHANGE through the enforcing (pyarrow) engine
+==============================================================================
+/Users/mohammed/codes/hajj-crowd-ops-platform/src/lakehouse/schema_demo.py:97: DeprecationWarning: pyarrow engine is deprecated and will be removed in v1.0
+  write_deltalake(str(DEMO_TABLE), breaking, mode="append", engine="pyarrow")
+appending occupancy_estimate as StringType ...
+  REJECTED -> ValueError
+  full message:
+    Schema of data does not match table schema
+    Data schema:
+    event_id: string
+    zone_id: string
+    occupancy_estimate: string
+    Table Schema:
+    event_id: string
+    zone_id: string
+    occupancy_estimate: int64
+
+==============================================================================
+PART 2 - ADDITIVE CHANGE accepted under an explicit schema_mode
+==============================================================================
+appending a new sensor_firmware_version column with schema_mode='merge' ...
+  ACCEPTED. Table schema is now:
+    columns: ['event_id', 'zone_id', 'occupancy_estimate', 'sensor_firmware_version']
+    rows: 3
+  Existing rows keep NULL for the new column - no rewrite, no data loss.
+
+==============================================================================
+HISTORY
+==============================================================================
+  v0  WRITE
+  v1  WRITE
+  v2  RESTORE
+  v3  WRITE
+
+==============================================================================
+RESULT
+==============================================================================
+Breaking change REFUSED by schema enforcement; additive change ACCEPTED.
+Exiting non-zero: this script's purpose is to show a write being refused.

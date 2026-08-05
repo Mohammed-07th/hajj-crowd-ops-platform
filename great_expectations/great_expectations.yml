@@ -107,6 +107,12 @@ fluent_datasources:
       bronze_suite_asset:
         type: dataframe
         batch_metadata: {}
+  silver_requests_suite_src:
+    type: pandas
+    assets:
+      silver_requests_suite_asset:
+        type: dataframe
+        batch_metadata: {}
 notebooks:
 include_rendered_content:
   globally: false
