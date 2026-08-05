@@ -1,0 +1,110 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "bronze_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "event_id"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "zone_id"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "event_time"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "kwargs": {
+        "column": "event_id"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "zone_id",
+        "value_set": [
+          "ALULA_HEGRA",
+          "ARAFAT_Z1",
+          "ARAFAT_Z2",
+          "DIRIYAH_TURAIF",
+          "HARAM_GATE_79",
+          "JAM_BRIDGE_L1",
+          "JAM_BRIDGE_L2",
+          "JAM_BRIDGE_L3",
+          "MASAA_L1",
+          "MASAA_L2",
+          "MATAF_01",
+          "MATAF_02",
+          "MATAF_03",
+          "MINA_CAMP_A",
+          "MINA_CAMP_B",
+          "MUZ_Z1"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "sensor_status",
+        "value_set": [
+          "OK",
+          "DEGRADED",
+          "OFFLINE"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "entries",
+        "max_value": 50000,
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "exits",
+        "max_value": 50000,
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "occupancy_estimate",
+        "max_value": 90000,
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "kwargs": {
+        "max_value": 5000000,
+        "min_value": 100000
+      },
+      "meta": {}
+    }
+  ],
+  "ge_cloud_id": null,
+  "meta": {
+    "great_expectations_version": "0.18.22"
+  }
+}
