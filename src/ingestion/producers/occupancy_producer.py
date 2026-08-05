@@ -66,7 +66,7 @@ def _prayer_boost(local_hour: float) -> float:
     for p in PRAYER_HOURS:
         delta = min(abs(local_hour - p), 24 - abs(local_hour - p))
         if delta < 1.5:
-            boost += 0.35 * (1 - delta / 1.5)
+            boost += 0.30 * (1 - delta / 1.5)
     return boost
 
 
@@ -81,7 +81,10 @@ def occupancy_factor(zone_type: str, sim_dt: datetime, day_index: int, rng: rand
 
     if zone_type in ("TAWAF", "SAI", "ENTRANCE"):
         # Continuous ritual: never empty, dips 01:00-04:00, peaks at prayers.
-        base = 0.45 + 0.20 * _daynight(local_hour)
+        # Tuned so prayer peaks land near 90-100% of rated capacity: crossing
+        # capacity should be a notable event the gold layer surfaces, not the
+        # permanent state of every zone every day.
+        base = 0.40 + 0.18 * _daynight(local_hour)
         factor = base + _prayer_boost(local_hour)
         if day_index in (ARAFAT_DAY,):
             factor *= 0.55  # pilgrims are at Arafat, not the Haram
