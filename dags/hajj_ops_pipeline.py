@@ -45,6 +45,8 @@ PIPELINE_PYTHON = str(REPO_ROOT / ".venv" / "bin" / "python")
 # gate-failure demonstration.
 DEFAULT_CORRUPT_RATE = 0.07
 DEFAULT_EVENTS = 200_000
+DEFAULT_REQUEST_EVENTS = 12_000
+DEFAULT_UNIQUE_REQUESTS = 2_500
 # Volume-pillar floor for the bronze gate. At the default 7% corruption rate a
 # healthy run lands ~186k rows; 150k leaves headroom for normal variation but
 # is far above what a 40%-corruption run can deliver.
@@ -95,17 +97,28 @@ def produce_test_events(**context) -> dict:
     _run_stage("src.ingestion.producers.occupancy_producer",
                ["--events", str(events), "--corrupt-rate", str(corrupt_rate), "--seed", "42"],
                "produce_test_events")
+    _run_stage("src.ingestion.producers.service_request_producer",
+               ["--events", str(DEFAULT_REQUEST_EVENTS),
+                "--requests", str(DEFAULT_UNIQUE_REQUESTS),
+                "--corrupt-rate", str(corrupt_rate), "--seed", "42"],
+               "produce_test_events")
     return {"events": events, "corrupt_rate": corrupt_rate}
 
 
 def ingest_bronze_occupancy(**context) -> dict:
     out = _run_stage("src.ingestion.consumer",
-                     ["--topic", "zone_occupancy_raw",
-                      "--bronze-table", "bronze_zone_occupancy",
-                      "--idle-timeout", "15"],
+                     ["--stream", "occupancy", "--idle-timeout", "15"],
                      "ingest_bronze_occupancy")
     result = _tail_json(out)
     # Small values only.
+    return {"accepted": result.get("accepted"), "rejected": result.get("rejected")}
+
+
+def ingest_bronze_requests(**context) -> dict:
+    out = _run_stage("src.ingestion.consumer",
+                     ["--stream", "requests", "--idle-timeout", "15"],
+                     "ingest_bronze_requests")
+    result = _tail_json(out)
     return {"accepted": result.get("accepted"), "rejected": result.get("rejected")}
 
 
@@ -116,9 +129,21 @@ def validate_bronze(**context) -> dict:
     return {"gate": "bronze", "status": "passed"}
 
 
+def validate_silver(**context) -> dict:
+    _run_stage("src.quality.run_gate", ["--layer", "silver"], "validate_silver")
+    return {"gate": "silver", "status": "passed"}
+
+
 def build_silver_occupancy(**context) -> dict:
     out = _run_stage("src.lakehouse.silver", ["--table", "occupancy"], "build_silver_occupancy")
     return {"rows": _tail_json(out).get("rows")}
+
+
+def build_silver_requests_merge(**context) -> dict:
+    out = _run_stage("src.lakehouse.silver", ["--table", "requests"],
+                     "build_silver_requests_merge")
+    result = _tail_json(out)
+    return {"rows": result.get("rows"), "staged_rows": result.get("staged_rows")}
 
 
 def build_gold_zone_hourly(**context) -> dict:
@@ -173,12 +198,23 @@ with DAG(
     )
 
     t_produce = PythonOperator(task_id="produce_test_events", python_callable=produce_test_events)
-    t_ingest = PythonOperator(task_id="ingest_bronze_occupancy", python_callable=ingest_bronze_occupancy)
+    t_ingest_occ = PythonOperator(task_id="ingest_bronze_occupancy",
+                                  python_callable=ingest_bronze_occupancy)
+    t_ingest_req = PythonOperator(task_id="ingest_bronze_requests",
+                                  python_callable=ingest_bronze_requests)
     t_gate1 = PythonOperator(task_id="validate_bronze", python_callable=validate_bronze)
-    t_silver = PythonOperator(task_id="build_silver_occupancy", python_callable=build_silver_occupancy)
+    t_silver_occ = PythonOperator(task_id="build_silver_occupancy",
+                                  python_callable=build_silver_occupancy)
+    t_silver_req = PythonOperator(task_id="build_silver_requests_merge",
+                                  python_callable=build_silver_requests_merge)
+    t_gate2 = PythonOperator(task_id="validate_silver", python_callable=validate_silver)
     t_gold = PythonOperator(task_id="build_gold_zone_hourly", python_callable=build_gold_zone_hourly)
 
-    # Default trigger_rule (all_success) everywhere: when validate_bronze fails,
-    # build_silver_occupancy and build_gold_zone_hourly go upstream_failed /
-    # skipped instead of running on unvalidated data.
-    start >> wait_for_sop_corpus >> t_produce >> t_ingest >> t_gate1 >> t_silver >> t_gold >> end
+    # Default trigger_rule (all_success) everywhere: when a gate fails,
+    # everything downstream goes upstream_failed / skipped instead of running on
+    # unvalidated data. The two ingest tasks and the two silver builds run as
+    # parallel branches that rejoin at their gate.
+    start >> wait_for_sop_corpus >> t_produce
+    t_produce >> [t_ingest_occ, t_ingest_req] >> t_gate1
+    t_gate1 >> [t_silver_occ, t_silver_req] >> t_gate2
+    t_gate2 >> t_gold >> end
