@@ -1,0 +1,72 @@
+# Golden question set for the operations copilot.
+#
+# `expected_docs` lists the document code(s) that genuinely contain the answer.
+# Retrieval is scored on whether those documents appear in the reranked top-5,
+# and the generated answer is scored on whether it cites them.
+#
+# Questions are written the way a duty officer would actually ask them - as
+# paraphrases, not as keyword queries - because that is the failure mode worth
+# testing.
+
+questions:
+  - id: q1_escalation_authority
+    question: >-
+      MATAF_01 has been above 90% capacity for 12 minutes. What is the
+      escalation procedure and who authorizes diversion?
+    expected_docs: [SOP-CS-011, SOP-CS-004]
+    must_contain: ["SOC Controller"]
+    language: en
+
+  - id: q2_p1_medical_sla
+    question: What is the response-time SLA for a P1 medical request?
+    expected_docs: [SOP-OPS-001]
+    must_contain: ["4"]
+    language: en
+
+  - id: q3_missing_child
+    question: >-
+      A child has been reported missing at MASAA_L2 - what are the first three
+      steps?
+    expected_docs: [SOP-SEC-007]
+    must_contain: ["description"]
+    language: en
+
+  - id: q4_wbgt_cooling
+    question: What WBGT reading triggers cooling measures?
+    expected_docs: [SOP-MED-009]
+    must_contain: ["28"]
+    language: en
+
+  - id: q5_evacuation_arabic
+    question: ما هي إجراءات الإخلاء؟
+    expected_docs: [SOP-CS-015]
+    must_contain: []
+    language: ar
+
+  - id: q6_density_limit
+    question: What is the crowd density limit in persons per square metre?
+    expected_docs: [SOP-CS-004]
+    must_contain: ["4"]
+    language: en
+
+  - id: q7_p1_security_notification
+    question: Who must be notified when a P1 security incident is raised?
+    expected_docs: [SOP-OPS-020]
+    must_contain: ["Civil Defence"]
+    language: en
+
+  - id: q8_water_station_interval
+    question: What is the servicing interval for water stations?
+    expected_docs: [SOP-SAN-003]
+    must_contain: ["4"]
+    language: en
+
+  - id: q9_out_of_scope
+    question: What is the refund policy for a cancelled Umrah booking?
+    expected_docs: []
+    must_contain: ["not covered"]
+    language: en
+    note: >-
+      Deliberately unanswerable from the corpus. Tests that the model refuses
+      rather than inventing a policy - the single most important behaviour in a
+      grounded system.
