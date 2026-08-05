@@ -1,0 +1,17 @@
+zone_id,site,zone_name_en,zone_name_ar,capacity,zone_type
+MATAF_01,HARAM_MAKKAH,Mataf Ground Level,المطاف الأرضي,48000,TAWAF
+MATAF_02,HARAM_MAKKAH,Mataf First Level,المطاف الأول,32000,TAWAF
+MATAF_03,HARAM_MAKKAH,Mataf Roof Level,المطاف السطح,26000,TAWAF
+MASAA_L1,HARAM_MAKKAH,Mas'a Ground,المسعى الأرضي,22000,SAI
+MASAA_L2,HARAM_MAKKAH,Mas'a First Level,المسعى الأول,18000,SAI
+JAM_BRIDGE_L1,MINA,Jamarat Level 1,الجمرات الدور الأول,55000,RITUAL
+JAM_BRIDGE_L2,MINA,Jamarat Level 2,الجمرات الدور الثاني,55000,RITUAL
+JAM_BRIDGE_L3,MINA,Jamarat Level 3,الجمرات الدور الثالث,50000,RITUAL
+MINA_CAMP_A,MINA,Mina Camp Sector A,مخيم منى أ,15000,ACCOMMODATION
+MINA_CAMP_B,MINA,Mina Camp Sector B,مخيم منى ب,15000,ACCOMMODATION
+ARAFAT_Z1,ARAFAT,Arafat Zone 1,عرفات ١,40000,GATHERING
+ARAFAT_Z2,ARAFAT,Arafat Zone 2,عرفات ٢,40000,GATHERING
+MUZ_Z1,MUZDALIFAH,Muzdalifah Zone 1,مزدلفة ١,60000,OVERNIGHT
+HARAM_GATE_79,HARAM_MAKKAH,King Abdulaziz Gate,باب الملك عبدالعزيز,8000,ENTRANCE
+ALULA_HEGRA,ALULA,Hegra Archaeological Site,الحجر,3000,TOURISM
+DIRIYAH_TURAIF,DIRIYAH,At-Turaif District,حي الطريف,5000,TOURISM
