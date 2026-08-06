@@ -49,7 +49,18 @@ gate-silver:     ## run the silver GE checkpoint (exits non-zero on failure)
 	$(PY) -m src.quality.run_gate --layer silver
 
 schema-demo:     ## failure demo 2 - delta refuses a breaking schema change
-	PYTHONPATH=. $(PY) -m src.lakehouse.schema_demo
+	@# The script exits 2 on success: its purpose is to show a write being
+	@# REFUSED, so a zero exit would be the wrong signal to a caller. Exit 2 is
+	@# translated here so `make` does not print "Error 2" and look broken during
+	@# a demo. Running the module directly still exits 2.
+	@PYTHONPATH=. $(PY) -m src.lakehouse.schema_demo; \
+	code=$$?; \
+	if [ $$code -eq 2 ]; then \
+	  echo; echo "make: schema-demo behaved as designed (script exit 2 = write refused)."; \
+	else \
+	  echo; echo "make: UNEXPECTED exit $$code - the breaking write was NOT refused."; \
+	  exit 1; \
+	fi
 
 rag-index:       ## chunk -> embed -> qdrant
 	PYTHONPATH=. $(PY) -m src.rag.index
