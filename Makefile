@@ -4,7 +4,7 @@ AF    := ./.venv-airflow/bin/airflow
 
 .PHONY: help up down ps topics seed reset produce ingest silver gold gate-bronze \
         gate-silver schema-demo rag-index rag-proofs golden ask pipeline airflow \
-        audit test demo-failures clean
+        demo audit test demo-failures clean
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -78,6 +78,9 @@ pipeline: reset produce ingest gate-bronze silver gate-silver gold  ## full run,
 
 airflow:         ## start airflow webserver + scheduler on the host
 	./scripts/start_airflow.sh
+
+demo:            ## guided live demo - press ENTER between steps
+	./scripts/demo.sh
 
 audit:           ## anti-substitution audit
 	./scripts/verify_no_simulation.sh
